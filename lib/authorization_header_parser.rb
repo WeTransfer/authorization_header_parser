@@ -7,7 +7,7 @@ module AuthorizationHeaderParser
   
   # Parse a custom scheme + params Authorization header.
   #
-  #   parse('absurd-auth token="12345"') #=> ['absurd-auth', {'token' => '12345}]
+  #   parse('absurd-auth token="12345"') #=> ['absurd-auth', {'token' => '12345'}]
   def parse(value)
     scanner = StringScanner.new(value)
     scheme = scanner.scan(NON_WHITESPACE)
