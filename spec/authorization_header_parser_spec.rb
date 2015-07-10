@@ -9,6 +9,22 @@ describe "AuthorizationHeaderParser" do
   end
   
   context '.parse' do
+    it 'parses a simple Token header with empty parameters' do
+      header = 'Token foo=, baz='
+      parsed = AuthorizationHeaderParser.parse(header)
+      scheme, params = parsed
+      expect(scheme).to eq('Token')
+      expect(params).to eq({"foo"=>"", "baz"=>""})
+    end
+    
+    it 'parses a simple Token header with some parameters being empty' do
+      header = 'Token foo=, bar="Value", baz='
+      parsed = AuthorizationHeaderParser.parse(header)
+      scheme, params = parsed
+      expect(scheme).to eq('Token')
+      expect(params).to eq({"foo"=>"", "bar" => "Value", "baz"=>""})
+    end
+    
     it 'parses a simple Token header' do
       header = 'Token foo=bar, baz=bad'
       parsed = AuthorizationHeaderParser.parse(header)
@@ -92,10 +108,6 @@ describe "AuthorizationHeaderParser" do
   
   context 'with invalid headers' do
     it 'raises InvalidHeader' do
-      expect {
-        AuthorizationHeaderParser.parse_params('foo=')
-      }.to raise_error(AuthorizationHeaderParser::InvalidHeader, /Expected opening of a parameter/)
-    
       expect {
         AuthorizationHeaderParser.parse_params('foo=bar"')
       }.to raise_error(AuthorizationHeaderParser::InvalidHeader, /Expected end of header or a comma/)

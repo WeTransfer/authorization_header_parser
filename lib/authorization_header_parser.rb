@@ -2,8 +2,20 @@ require 'strscan'
 
 
 module AuthorizationHeaderParser
-  VERSION = '1.0.0'
-  InvalidHeader = Class.new(StandardError)
+  VERSION = '1.1.0'
+  
+  class InvalidHeader < StandardError
+  end
+  
+  class ParseError < InvalidHeader
+    def initialize(message, scanner)
+      str = scanner.string
+      from = [(scanner.pos - 5), 0].sort.pop
+      upto = [(scanner.pos + 5), str.length].sort.shift
+      piece = str[from..upto]
+      super "#{message} - at #{scanner.pos} (around #{piece.inspect})"
+    end
+  end
   
   # Parse a custom scheme + params Authorization header.
   #
@@ -33,7 +45,7 @@ module AuthorizationHeaderParser
   
   ANYTHING_BUT_EQ = /[^\s\=]+/
   EQ = /=/
-  UNTIL_FWD_SLASH_OR_QUOTE = /[^\\"]+/
+  UNTIL_BACKSLASH_OR_QUOTE = /[^\\"]+/
   ESCAPED_QUOTE = /\\"/
   QUOTE = /"/
   WHITESPACE = /\s+/
@@ -46,13 +58,17 @@ module AuthorizationHeaderParser
     params = {}
     until scanner.eos? do
       key = scanner.scan(ANYTHING_BUT_EQ)
-      raise InvalidHeader, "Expected =, but found none at #{scanner.pos}" unless scanner.scan(EQ)
-      value_opener = scanner.get_byte
-      raise InvalidHeader, "Expected opening of a parameter at #{scanner.pos}" unless value_opener
-      if value_opener == '"' # Quoted value
+      raise ParseError.new("Expected =, but found none", scanner) unless scanner.skip(EQ)
+      
+      if scanner.eos? # Last parameter was empty, return
+        params[key] = ''
+        return params
+      end
+      
+      if scanner.skip(QUOTE) # Quoted value
         buf = ''
         until scanner.eos?
-          if scanner.scan(UNTIL_FWD_SLASH_OR_QUOTE)
+          if scanner.scan(UNTIL_BACKSLASH_OR_QUOTE)
             buf << scanner.matched
           elsif scanner.scan(ESCAPED_QUOTE)
             buf << '"'
@@ -61,16 +77,16 @@ module AuthorizationHeaderParser
             break
           end
         end
-      else
-        scanner.unscan # Bare parameter, backtrack 1 byte
-        unless bare_value = scanner.scan(/[^,"]+/)
-          raise InvalidHeader, "Expected a bare parameter value at #{scanner.pos}"
+      else # Bare parameter
+        if bare_value = scanner.scan(/[^,"]+/)
+          params[key] = bare_value
+        else # Empty parameter
+          params[key] = ''
         end
-        params[key] = bare_value
       end
       scanner.skip(WHITESPACE)
       if !scanner.eos? && !scanner.skip(COMMA)
-        raise InvalidHeader, "Expected end of header or a comma, at #{scanner.pos}"
+        raise ParseError.new("Expected end of header or a comma", scanner)
       end
       scanner.skip(WHITESPACE)
     end
