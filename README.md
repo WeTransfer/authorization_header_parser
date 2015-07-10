@@ -11,7 +11,7 @@ For instance, with a custom `Authorization` header of `my-scheme token="12345"`
 or for both scheme and params:
 
     scheme, params = AuthorizationHeaderParser.parse(env['HTTP_AUTHORIZATION])
-    # => ['my-scheme', {'token' => '12345}]
+    # => ['my-scheme', {'token' => '12345}] 
 
 Works well for token, Digest, OAuth and other schemes using custom authorization parameters.
 
