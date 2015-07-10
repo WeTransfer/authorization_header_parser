@@ -1,6 +1,5 @@
 require 'strscan'
 
-
 module AuthorizationHeaderParser
   VERSION = '1.1.0'
   
