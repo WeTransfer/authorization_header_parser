@@ -1,5 +1,7 @@
 # authorization_header_parser
 
+![Travis-CI status](https://api.travis-ci.org/julik/authorization_header_parser.svg?branch=master)
+
 Parse custom authorization parameters from `Authorization:` HTTP headers into a neat
 Ruby Hash. Works best in combination with `Rack::Auth::AbstractRequest`
 
@@ -11,7 +13,7 @@ For instance, with a custom `Authorization` header of `my-scheme token="12345"`
 or for both scheme and params:
 
     scheme, params = AuthorizationHeaderParser.parse(env['HTTP_AUTHORIZATION])
-    # => ['my-scheme', {'token' => '12345}] 
+    # => ['my-scheme', {'token' => '12345}]
 
 Works well for token, Digest, OAuth and other schemes using custom authorization parameters.
 
