@@ -29,6 +29,6 @@ Works well for token, Digest, OAuth and other schemes using custom authorization
 
 ## Copyright
 
-Copyright (c) 2015 Julik Tarkhanov. See LICENSE.txt for
+Copyright (c) 2015 WeTransfer. See LICENSE.txt for
 further details.
 
