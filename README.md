@@ -1,6 +1,6 @@
 # authorization_header_parser
 
-[![Build Status](https://travis-ci.org/WeTransfer/hash_tools.svg?branch=master)](https://travis-ci.org/WeTransfer/hash_tools)
+[![Build Status](https://travis-ci.org/WeTransfer/authorization_header_parser.svg?branch=master)](https://travis-ci.org/WeTransfer/authorization_header_parser)
 
 Parse custom authorization parameters from `Authorization:` HTTP headers into a neat
 Ruby Hash. Works best in combination with `Rack::Auth::AbstractRequest`
