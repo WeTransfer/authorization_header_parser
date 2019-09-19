@@ -1,11 +1,11 @@
 require 'strscan'
 
 module AuthorizationHeaderParser
-  VERSION = '1.1.0'
-  
+  VERSION = '1.1.1'
+
   class InvalidHeader < StandardError
   end
-  
+
   class ParseError < InvalidHeader
     def initialize(message, scanner)
       str = scanner.string
@@ -15,7 +15,7 @@ module AuthorizationHeaderParser
       super "#{message} - at #{scanner.pos} (around #{piece.inspect})"
     end
   end
-  
+
   # Parse a custom scheme + params Authorization header.
   #
   #   parse('absurd-auth token="12345"') #=> ['absurd-auth', {'token' => '12345'}]
@@ -24,10 +24,10 @@ module AuthorizationHeaderParser
     scheme = scanner.scan(NON_WHITESPACE)
     raise InvalidHeader.new("Scheme not provided") unless scheme
     scanner.skip(WHITESPACE)
-    
+
     [scheme.strip, extract_params_from_scanner(scanner)]
   end
-  
+
   # Parse Authorization params. Most useful in combination with Rack::Auth::AbstractRequest
   #
   # For instance, with 'Authorization: absurd-auth token="12345"':
@@ -37,11 +37,11 @@ module AuthorizationHeaderParser
   def parse_params(string)
     extract_params_from_scanner(StringScanner.new(string))
   end
-  
+
   extend self
-  
+
   private
-  
+
   ANYTHING_BUT_EQ = /[^\s\=]+/
   EQ = /=/
   UNTIL_BACKSLASH_OR_QUOTE = /[^\\"]+/
@@ -50,7 +50,7 @@ module AuthorizationHeaderParser
   WHITESPACE = /\s+/
   COMMA = /,/
   NON_WHITESPACE = /[^\s]+/
-  
+
   # http://codereview.stackexchange.com/questions/41270
   # http://stackoverflow.com/questions/134936
   def extract_params_from_scanner(scanner)
@@ -58,12 +58,12 @@ module AuthorizationHeaderParser
     until scanner.eos? do
       key = scanner.scan(ANYTHING_BUT_EQ)
       raise ParseError.new("Expected =, but found none", scanner) unless scanner.skip(EQ)
-      
+
       if scanner.eos? # Last parameter was empty, return
         params[key] = ''
         return params
       end
-      
+
       if scanner.skip(QUOTE) # Quoted value
         buf = ''
         until scanner.eos?
