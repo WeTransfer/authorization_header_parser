@@ -21,7 +21,8 @@ Gem::Specification.new do |s|
   s.summary = "such as OAuth and Digest"
 
   s.specification_version = 4
-  s.add_development_dependency('bundler')
-  s.add_development_dependency('rspec', '~> 3')
-  s.add_development_dependency('rake', '~> 10')
+  s.add_development_dependency 'bundler'
+  s.add_development_dependency 'rspec', '~> 3'
+  s.add_development_dependency 'rake', '~> 10'
+  s.add_development_dependency 'wetransfer_style', '0.6.0'
 end

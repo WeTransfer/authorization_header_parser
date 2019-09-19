@@ -22,7 +22,7 @@ module AuthorizationHeaderParser
   def parse(value)
     scanner = StringScanner.new(value)
     scheme = scanner.scan(NON_WHITESPACE)
-    raise InvalidHeader.new("Scheme not provided") unless scheme
+    raise InvalidHeader, "Scheme not provided" unless scheme
     scanner.skip(WHITESPACE)
 
     [scheme.strip, extract_params_from_scanner(scanner)]
@@ -55,7 +55,7 @@ module AuthorizationHeaderParser
   # http://stackoverflow.com/questions/134936
   def extract_params_from_scanner(scanner)
     params = {}
-    until scanner.eos? do
+    until scanner.eos?
       key = scanner.scan(ANYTHING_BUT_EQ)
       raise ParseError.new("Expected =, but found none", scanner) unless scanner.skip(EQ)
 
@@ -77,11 +77,11 @@ module AuthorizationHeaderParser
           end
         end
       else # Bare parameter
-        if bare_value = scanner.scan(/[^,"]+/)
-          params[key] = bare_value
+        params[key] = if bare_value = scanner.scan(/[^,"]+/)
+          bare_value
         else # Empty parameter
-          params[key] = ''
-        end
+          ''
+                      end
       end
       scanner.skip(WHITESPACE)
       if !scanner.eos? && !scanner.skip(COMMA)
