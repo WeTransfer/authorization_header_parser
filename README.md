@@ -18,7 +18,7 @@ or for both scheme and params:
 Works well for token, Digest, OAuth and other schemes using custom authorization parameters.
 
 ## Contributing to authorization_header_parser
- 
+
 * Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet.
 * Check out the issue tracker to make sure someone already hasn't requested it and/or contributed it.
 * Fork the project.
@@ -29,6 +29,6 @@ Works well for token, Digest, OAuth and other schemes using custom authorization
 
 ## Copyright
 
-Copyright (c) 2015 WeTransfer. See LICENSE.txt for
+Copyright (c) 2019 WeTransfer. See LICENSE.txt for
 further details.
 
