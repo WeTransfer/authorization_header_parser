@@ -76,12 +76,10 @@ module AuthorizationHeaderParser
             break
           end
         end
-      else # Bare parameter
-        params[key] = if bare_value = scanner.scan(/[^,"]+/)
-          bare_value
-        else # Empty parameter
-          ''
-                      end
+      elsif bare_value = scanner.scan(/[^,"]+/) # Bare parameter
+        params[key] = bare_value
+      else # Empty parameter
+        params[key] = ''
       end
       scanner.skip(WHITESPACE)
       if !scanner.eos? && !scanner.skip(COMMA)
